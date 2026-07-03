@@ -63,18 +63,14 @@ export function BirthInput({ initial, onSubmit }: Props) {
           padding: "8px 24px 24px",
         }}
       >
-        <TextField
-          variant="box"
-          label="생년월일"
-          labelOption="sustain"
-          placeholder="예: 19930215 (YYYYMMDD)"
-          value={digits}
-          onChange={handleChange}
-          hasError={digits.length > 0 && !valid}
-          help={helpText(digits, valid, calendarType)}
-        />
-
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
+            width: "100%",
+          }}
+        >
           <span style={{ fontSize: "14px", color: colors.grey500 }}>
             양력 / 음력
           </span>
@@ -85,6 +81,19 @@ export function BirthInput({ initial, onSubmit }: Props) {
             <SegmentedControl.Item value="solar">양력</SegmentedControl.Item>
             <SegmentedControl.Item value="lunar">음력</SegmentedControl.Item>
           </SegmentedControl>
+        </div>
+
+        <div style={{ width: "100%" }}>
+          <TextField
+            variant="box"
+            label="생년월일"
+            labelOption="sustain"
+            placeholder="예: 19930215 (YYYYMMDD)"
+            value={digits}
+            onChange={handleChange}
+            hasError={digits.length > 0 && !valid}
+            help={helpText(digits, valid, calendarType)}
+          />
         </div>
       </div>
 

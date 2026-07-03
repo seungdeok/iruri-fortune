@@ -102,7 +102,7 @@ export function FortuneResult({ user, fortune, onReset }: Props) {
   const { overall, categories, lucky, zodiac, dateLabel } = fortune;
 
   return (
-    <div style={{ paddingBottom: "112px" }}>
+    <div>
       <Top
         title={
           <Top.TitleParagraph size={22}>
@@ -196,24 +196,32 @@ export function FortuneResult({ user, fortune, onReset }: Props) {
           <LuckyCard>
             <span
               style={{
-                width: "32px",
-                height: "32px",
-                borderRadius: "50%",
-                background: lucky.color.hex,
-                border: "1px solid rgba(0,0,0,0.06)",
-              }}
-            />
-            <span style={{ fontSize: "13px", color: colors.grey500 }}>
-              🎨 행운의 색
-            </span>
-            <span
-              style={{
-                fontSize: "15px",
-                fontWeight: 700,
-                color: colors.grey800,
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
               }}
             >
-              {lucky.color.name}
+              <span
+                style={{
+                  width: "20px",
+                  height: "20px",
+                  borderRadius: "50%",
+                  background: lucky.color.hex,
+                  border: "1px solid rgba(0,0,0,0.06)",
+                }}
+              />
+              <span
+                style={{
+                  fontSize: "20px",
+                  fontWeight: 700,
+                  color: colors.grey800,
+                }}
+              >
+                {lucky.color.name}
+              </span>
+            </span>
+            <span style={{ fontSize: "13px", color: colors.grey500 }}>
+              🎨 행운의 색
             </span>
           </LuckyCard>
           <LuckyCard>
