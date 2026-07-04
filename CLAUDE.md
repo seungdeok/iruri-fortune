@@ -65,6 +65,7 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 **모든 단위 작업은 다음 작업을 더 쉽게 만들어야 한다. 리뷰가 끝나면 그냥 끝내지 말고, 이번에 겪은 실수·교훈을 프로세스에 남긴다.**
 
 Compound Engineering 루프: `brainstorm → plan → work → simplify → review → compound`.
+각 단계에서 쓰는 스킬: **simplify → `/simplify`** (변경 diff에 재사용·단순화·효율 정리 적용, 버그 탐색 아님) → **review → `/ce-code-review` 또는 `/code-review`** (변경 diff의 버그·정리 지적). (`/review`는 GitHub PR 전용이라 이 로컬 루프에서는 쓰지 않는다.)
 코드 변경이 포함된 작업이 **리뷰(`/ce-code-review` 또는 일반 코드 리뷰)까지 끝나면**, 아래 compound 단계를 반드시 수행한다. (사소한 질의·조회·문서 오탈자 같은 무변경 작업은 제외)
 
 1. **회고**: 이번 실행–검토 과정에서 발생한 실수, 헛디딤, 되풀이하기 싫은 판단 미스, 새로 배운 것을 1~3줄로 정리한다.
