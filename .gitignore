@@ -9,6 +9,7 @@ build/
 out/
 .granite/
 .ait/
+*.ait
 
 # Logs
 logs/
