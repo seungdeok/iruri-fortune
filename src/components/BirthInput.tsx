@@ -1,4 +1,3 @@
-import { colors } from "@toss/tds-colors";
 import { Button, SegmentedControl, TextField, Top } from "@toss/tds-mobile";
 import { useState, type ChangeEvent } from "react";
 
@@ -59,21 +58,15 @@ export function BirthInput({ initial, onSubmit }: Props) {
         style={{
           display: "flex",
           flexDirection: "column",
-          gap: "20px",
-          padding: "8px 24px 24px",
         }}
       >
         <div
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: "8px",
             width: "100%",
           }}
         >
-          <span style={{ fontSize: "14px", color: colors.grey500 }}>
-            양력 / 음력
-          </span>
           <SegmentedControl
             value={calendarType}
             onChange={(value) => setCalendarType(value as CalendarType)}
@@ -81,9 +74,6 @@ export function BirthInput({ initial, onSubmit }: Props) {
             <SegmentedControl.Item value="solar">양력</SegmentedControl.Item>
             <SegmentedControl.Item value="lunar">음력</SegmentedControl.Item>
           </SegmentedControl>
-        </div>
-
-        <div style={{ width: "100%" }}>
           <TextField
             variant="box"
             label="생년월일"

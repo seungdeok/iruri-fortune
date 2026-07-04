@@ -9,6 +9,7 @@
   },
   "scripts": {
     "dev": "granite dev",
+    "dev:local": "node node_modules/@apps-in-toss/web-framework/bin.js dev",
     "build": "ait build",
     "deploy": "ait deploy",
     "lint": "eslint .",
