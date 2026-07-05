@@ -49,31 +49,9 @@ src/
 └── storage/             # 사용자 정보 로컬 저장
 ```
 
-## Compound Engineering 하네스 (선택)
+## 개발 하네스 (선택)
 
-이 프로젝트는 `brainstorm → plan → work → simplify → review → compound` 루프를 [compound-engineering](https://github.com/EveryInc/compound-engineering-plugin) 플러그인으로 돌려요 (자세한 규칙은 `CLAUDE.md` 참고). Claude Code에서 이 하네스를 쓰려면 플러그인을 직접 켜야 해요.
-
-> 플러그인·마켓플레이스 설정은 보안상 **커밋되는** `.claude/settings.json`에는 넣을 수 없어요 (레포가 팀원에게 임의 플러그인 설치를 강제하는 걸 막기 위해서예요). 그래서 **개인 로컬 설정**에만 넣어요.
-
-프로젝트 루트에 `.claude/settings.local.json`을 만들고 아래 내용을 넣으세요 (이 파일은 `.gitignore` 처리돼 커밋되지 않아요):
-
-```json
-{
-  "enabledPlugins": {
-    "compound-engineering@compound-engineering-plugin": true
-  },
-  "extraKnownMarketplaces": {
-    "compound-engineering-plugin": {
-      "source": {
-        "source": "github",
-        "repo": "EveryInc/compound-engineering-plugin"
-      }
-    }
-  }
-}
-```
-
-Claude Code를 재시작하면 `/ce-brainstorm`, `/ce-plan`, `/ce-code-review`, `/ce-compound` 같은 스킬을 쓸 수 있어요. 전역(모든 프로젝트)에 켜고 싶으면 같은 내용을 `~/.claude/settings.json`에 넣으면 돼요.
+이 프로젝트는 `brainstorm → plan → work → simplify → review → compound` 루프를 Compound Engineering 플러그인으로 돌려요. 플러그인 활성화 방법과 루프 규칙은 [docs/harness](./docs/harness/README.md)를 참고하세요.
 
 ## 유용한 링크
 
