@@ -45,3 +45,6 @@ Thumbs.db
 # oh-my-claudecode runtime/generated state
 .omc/
 .claude/.cc-writes/
+
+# Claude Code local (개인) 설정 — 플러그인 활성화 등, 커밋하지 않아요
+.claude/settings.local.json
