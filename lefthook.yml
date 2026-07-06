@@ -2,3 +2,11 @@ pre-commit:
   commands:
     lint-staged:
       run: pnpm lint-staged
+    # 넛지 전용(비차단): 코드 변경 커밋인데 compound 노트가 없으면 알림. CLAUDE.md 5장 참고.
+    compound-reminder:
+      run: |
+        code=$(git diff --cached --name-only | grep -E '\.(ts|tsx|js|jsx)$' | grep -vE '^docs/')
+        note=$(git diff --cached --name-only | grep -E '^docs/harness/')
+        if [ -n "$code" ] && [ -z "$note" ]; then
+          echo "⚠️  코드 변경 커밋인데 compound 노트가 없어요. 리뷰까지 끝났다면 /ce-compound (사소한 작업이면 무시)"
+        fi
