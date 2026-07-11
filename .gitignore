@@ -48,3 +48,8 @@ Thumbs.db
 
 # Claude Code local (개인) 설정 — 플러그인 활성화 등, 커밋하지 않아요
 .claude/settings.local.json
+
+# phase execution outputs
+phases/**/phase*-output.json
+phases/**/step*-output.json
+phases/**/stage*-output.json
