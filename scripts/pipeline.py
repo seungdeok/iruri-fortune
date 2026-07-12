@@ -40,6 +40,9 @@ STAGES = [
     ("compound", "/ce-compound"),
 ]
 
+# init 때 한 번 물어보고 생략할 수 있는 선택 stage.
+REVIEW_STAGES = {"plan-review-ceo", "plan-review-eng"}
+
 
 def _stamp() -> str:
     return datetime.now(KST).strftime("%Y-%m-%dT%H:%M:%S%z")
@@ -64,13 +67,14 @@ def _run_git(*args) -> subprocess.CompletedProcess:
 
 # --- 순수 상태 로직 (git/io 없음 → selftest 대상) --------------------------
 
-def new_phase_doc(slug: str) -> dict:
+def new_phase_doc(slug: str, include_review: bool = True) -> dict:
+    stages = [(n, a) for n, a in STAGES if include_review or n not in REVIEW_STAGES]
     return {
         "phase": slug,
         "branch": f"feat-{slug}",
         "created_at": _stamp(),
         "cursor": 0,
-        "stages": [{"name": n, "action": a, "status": "pending"} for n, a in STAGES],
+        "stages": [{"name": n, "action": a, "status": "pending"} for n, a in stages],
     }
 
 
@@ -134,23 +138,38 @@ def _show_next(doc: dict):
 
 # --- 서브커맨드 ------------------------------------------------------------
 
-def cmd_init(name: str):
+def _ask_review(no_review: bool) -> bool:
+    """plan-review stage 를 포함할지 한 번만 물어본다.
+    --no-review 면 안 물어보고 생략. 비대화형(headless)이면 기본 포함."""
+    if no_review:
+        return False
+    if not sys.stdin.isatty():
+        return True
+    ans = input("  plan review(CEO/Eng) stage 를 실행할까요? [Y/n] ").strip().lower()
+    return ans not in ("n", "no")
+
+
+def cmd_init(name: str, no_review: bool = False):
+    """phase 전용 worktree(.claude/worktrees/<slug>)를 만들고 그 안에 phase.json 을 심는다.
+    메인 체크아웃 브랜치는 건드리지 않아 phase 를 병렬로 돌릴 수 있다."""
     slug = _slug(name)
-    f = _phase_file(slug)
+    branch = f"feat-{slug}"
+    wt = ROOT / ".claude" / "worktrees" / slug
+    f = wt / "phases" / slug / "phase.json"
     if f.exists():
         sys.exit(f"ERROR: {f} 이미 있음.")
-    branch = f"feat-{slug}"
-    cur = _run_git("rev-parse", "--abbrev-ref", "HEAD")
-    if cur.returncode != 0:
-        sys.exit("ERROR: git repo 가 아니거나 git 사용 불가.")
-    if cur.stdout.strip() != branch:
+    include_review = _ask_review(no_review)
+    if not wt.exists():
         exists = _run_git("rev-parse", "--verify", branch).returncode == 0
-        r = _run_git("checkout", branch) if exists else _run_git("checkout", "-b", branch)
+        r = _run_git("worktree", "add", str(wt), *([branch] if exists else ["-b", branch]))
         if r.returncode != 0:
-            sys.exit(f"ERROR: 브랜치 '{branch}' checkout 실패: {r.stderr.strip()}")
+            sys.exit(f"ERROR: worktree '{wt}' 생성 실패: {r.stderr.strip()}")
     f.parent.mkdir(parents=True, exist_ok=True)
-    _write(f, new_phase_doc(slug))
-    print(f"  Phase '{slug}' 시작 (branch: {branch})")
+    _write(f, new_phase_doc(slug, include_review))
+    if not include_review:
+        print("  (plan review 생략)")
+    print(f"  Phase '{slug}' 시작 (worktree: {wt}, branch: {branch})")
+    print(f"  이후 명령은 worktree 안에서 실행하세요: cd {wt}")
     _show_next(_read(f))
 
 
@@ -205,6 +224,9 @@ def selftest():
     assert all(s["status"] == "completed" for s in doc["stages"])
     mark_advance(doc)  # 끝난 뒤 advance 는 no-op
     assert doc["cursor"] == len(STAGES)
+    no_rev = new_phase_doc("데모", include_review=False)
+    assert len(no_rev["stages"]) == len(STAGES) - len(REVIEW_STAGES)
+    assert not any(s["name"] in REVIEW_STAGES for s in no_rev["stages"])
     assert _slug("Share Fortune!!") == "share-fortune"
     print("selftest OK")
 
@@ -213,6 +235,7 @@ def main():
     ap = argparse.ArgumentParser(description="Harness Pipeline")
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("init"); p.add_argument("name")
+    p.add_argument("--no-review", action="store_true", help="plan-review(ceo/eng) stage 생략(안 물어봄)")
     p = sub.add_parser("status"); p.add_argument("phase", nargs="?")
     p = sub.add_parser("advance"); p.add_argument("phase", nargs="?"); p.add_argument("--summary")
     p = sub.add_parser("run"); p.add_argument("phase", nargs="?")
@@ -220,7 +243,7 @@ def main():
     a = ap.parse_args()
 
     if a.cmd == "init":
-        cmd_init(a.name)
+        cmd_init(a.name, a.no_review)
     elif a.cmd == "status":
         cmd_status(a.phase)
     elif a.cmd == "advance":
